@@ -21,5 +21,5 @@ You need to modify __init__.py from XNAT Package to to use your client-cert for 
 
     This is for https request can handle the client cert session
 
-3) Convert your *.p12 file + Passwort to a *.pem file   -> see provided function (Miro edit)
+3) Convert your *.p12 file + Passwort to a *.pem file   -> see provided function `pfx2pem.py` (Miro edit)
 4) put the pem file a cert param into the xnat.connect() function

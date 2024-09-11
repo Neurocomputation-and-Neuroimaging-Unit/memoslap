@@ -27,7 +27,7 @@ Then run the [transform_coordinates_from_NBE_file.py](https://github.com/Neuroco
 The script will convert the electrode positions that are saved into the Nexstim space into the space of the nifti image. This will make sure that the electrode position and the T1 are in the same space. 
 The converted digitized electrode positions are stored into an .sfp file that will look like this:
 
-![Example of the converted digitzation file](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/Converted_Digitization_example.png)
+![Example of the converted digitzation file](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/Digitization_example_converted.png)
 
 
 ## Checking that electrodes have been digitized correctly

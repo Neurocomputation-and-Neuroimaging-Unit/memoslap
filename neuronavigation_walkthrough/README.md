@@ -31,7 +31,7 @@ The converted digitized electrode positions are stored into an .sfp file that wi
 
 
 ## Checking that electrodes have been digitized correctly
-Now simply make sure that the converted digitized electrodes and the T1 nifti image are matching and especially that the electrodes are adjecent to the participant's scalp. To do this, simply create a nifti file containing spheres centered at the electrode positions using the [plot_digitization_exam.m]([link](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/plot_digitization_exam.m)) script. Make sure to change the following fields: 
+Now simply make sure that the converted digitized electrodes and the T1 nifti image are matching and especially that the electrodes are adjecent to the participant's scalp. To do this, simply create a nifti file containing spheres centered at the electrode positions using the [plot_digitization_exam.m](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/plot_digitization_exam.m) script. Make sure to change the following fields: 
 - mri_path --> path to the converted T1w nifti image
 - elec_path --> path to the converted electrodes
 

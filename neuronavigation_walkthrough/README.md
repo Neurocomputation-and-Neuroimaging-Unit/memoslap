@@ -13,10 +13,27 @@ Once all 64 electrodes have been digitized, in the eXimia session tree (left pan
 IMPORTANT NOTE: please also make sure that in the settings panel, the System coordinates is set to "MRI-coordinate system" (standard configuration) before exporting. 
 
 The exported file will look like this: 
+
 ![Example of the digitzation file](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/Digization_example.png)
 
 
 ## Importing the data
+As a first step, convert your old dicom files into a nifti image (in this example, I used dcm2niix as contained in MRIcron v.1.0.20190902). 
+Then run the [transform_coordinates_from_NBE_file.py](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/transform_coordinates_from_NBE_file.py) script by first making sure that the following fields are correct: 
+- input_filename --> path to the digitized electrode file as exported from nexstim
+- input_volume_path --> path to the nifti image
+- output_filename --> path to the to-be-converted file containing the digitized electrode positions
+
+The script will convert the electrode positions that are saved into the Nexstim space into the space of the nifti image. This will make sure that the electrode position and the T1 are in the same space. 
+The converted digitized electrode positions are stored into an .sfp file that will look like this:
+
+![Example of the converted digitzation file](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/Converted_Digitization_example.png)
 
 
 ## Checking that electrodes have been digitized correctly
+Now simply make sure that the converted digitized electrodes and the T1 nifti image are matching and especially that the electrodes are adjecent to the participant's scalp. To do this, simply create a nifti file containing spheres centered at the electrode positions using the [plot_digitization_exam.m]([link](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/plot_digitization_exam.m)) script. Make sure to change the following fields: 
+- mri_path --> path to the converted T1w nifti image
+- elec_path --> path to the converted electrodes
+
+To display the electrode positions on top of the T1 image, download [MRIcroGL](https://www.nitrc.org/projects/mricrogl). First open the T1 and then add the electrode positions nifti image as an overlay. 
+![Example of how an image is displayed on MRIcroGL](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/screenshot_MRIcroGL.png)

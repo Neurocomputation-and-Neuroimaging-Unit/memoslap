@@ -14,7 +14,7 @@ IMPORTANT NOTE: please also make sure that in the settings panel, the System coo
 
 The exported file will look like this: 
 
-![Example of the digitzation file](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/Digization_example.png)
+![Example of the digitzation file](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/imgs/Digization_example.png)
 
 
 ## Importing the data
@@ -27,7 +27,7 @@ Then run the [transform_coordinates_from_NBE_file.py](https://github.com/Neuroco
 The script will convert the electrode positions that are saved into the Nexstim space into the space of the nifti image. This will make sure that the electrode position and the T1 are in the same space. 
 The converted digitized electrode positions are stored into an .sfp file that will look like this:
 
-![Example of the converted digitzation file](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/Digitization_example_converted.png)
+![Example of the converted digitzation file](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/imgs/Digitization_example_converted.png)
 
 
 ## Checking that electrodes have been digitized correctly
@@ -36,4 +36,4 @@ Now simply make sure that the converted digitized electrodes and the T1 nifti im
 - elec_path --> path to the converted electrodes
 
 To display the electrode positions on top of the T1 image, download [MRIcroGL](https://www.nitrc.org/projects/mricrogl). First open the T1 and then add the electrode positions nifti image as an overlay. 
-![Example of how an image is displayed on MRIcroGL](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/screenshot_MRIcroGL.png)
+![Example of how an image is displayed on MRIcroGL](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/imgs/screenshot_MRIcroGL.png)

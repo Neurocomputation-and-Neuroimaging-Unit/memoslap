@@ -13,7 +13,7 @@ Once all 64 electrodes have been digitized, in the eXimia session tree (left pan
 IMPORTANT NOTE: please also make sure that in the settings panel, the System coordinates is set to "MRI-coordinate system" (standard configuration) before exporting. 
 
 The exported file will look like this: 
-
+![Example of the digitzation file](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_walkthrough/Digization_example.png)
 
 
 ## Importing the data

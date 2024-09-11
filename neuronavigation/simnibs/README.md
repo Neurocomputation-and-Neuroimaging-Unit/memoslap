@@ -1,5 +1,8 @@
 # memoslap
 
+### Get SIMNIBS
+https://simnibs.github.io/simnibs/build/html/index.html
+
 SimNIBS Memoslap utils
 A. Thielscher, 08-04-2023
 

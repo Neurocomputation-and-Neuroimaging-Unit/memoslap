@@ -12,7 +12,7 @@ resource_name = 'beh'
 
 logdir = 'E:/MeMoSLAP/data/logs_task_xnat'
 
-subjects = [11, 17]     # subject number (in the 2000 range for Sham Arm)
+subjects = [0, 1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 23, 24]     # subject number (in the 2000 range for Sham Arm)
 sessions = [3, 4]      # session ID for XNAT [0, 1, 2, 3, 4]
 runs = [1, 2, 3, 4]
 
@@ -23,10 +23,9 @@ for sub in subjects:
 
     for ses in sessions:
         experiment_id = f'{subject_id}_{ses}'
-        n_task = ses-2  # task number in experiment is 1 or 2 for sessions 3 and 4
 
         for run in runs:
-            logfile_name = f'{logdir}/sub-{subject_id}_ses-task/sub-{subject_id}_tDCS_TWMD_ses-{n_task:02d}_run-{run:02d}_*.tsv'
+            logfile_name = f'{logdir}/sub-{subject_id}_ses-task/sub-{subject_id}_ses-{ses}_task-DMTS_acq-{ses-2}_run-{run}_beh.tsv'
             # Find all matching .tsv files
             matching_files = glob.glob(logfile_name)
             if len(matching_files) != 1:

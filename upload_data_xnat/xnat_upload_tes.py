@@ -13,7 +13,7 @@ resource_name = 'phenotype'
 quest = 'TES'
 quest_dir = 'E:/MeMoSLAP/data/assessments/' + quest
 
-subjects = [0, 1, 2] #[0, 1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 23, 24]    # subject number (in the 2000 range for Sham Arm)
+subjects = [0, 1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 23, 24]    # subject number (in the 2000 range for Sham Arm)
 sessions = [1, 2, 3, 4]     # session ID for XNAT [0, 1, 2, 3, 4]
 
 for sub in subjects:
@@ -23,7 +23,7 @@ for sub in subjects:
     for ses in sessions:
         experiment_id = f'{subject_id}_{ses}'
 
-        file_name = f'{quest_dir}/{subject_id}_ses-{ses:02d}_{quest.lower()}'
+        file_name = f'{quest_dir}/sub-{subject_id}_ses-{ses}_{quest.lower()}'
         # Find all matching .tsv files
         matching_files = glob.glob(file_name + '.tsv')
         if len(matching_files) != 1:

@@ -1,5 +1,5 @@
 # MeMoSLAP
-Repository for code specific to the MeMoSLAP project
+Repository for code specific to the [MeMoSLAP](https://www.memoslap.de/en/home/) project
 
 ### Neuronavigation
    - everything related to neuronavigation with the Nexstim system (eXimia software, Polaris sensors)

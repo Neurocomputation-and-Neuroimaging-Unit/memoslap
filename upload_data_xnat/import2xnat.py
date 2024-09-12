@@ -6,8 +6,8 @@ import time
 
 def start_xnat_session():
     # Start XNAT session
-    user = 'grundeim'  # XNAT user
-    password = 'wNuVhHDS'  # XNAT password
+    user = ''  # XNAT user
+    password = ''  # XNAT password
     pem_certificate = 'C:/Users/nnu04/Documents/MeMoSLAP/XNAT/GRUNDEI.pem'  # Certificate in .pem format
     xnat_session = xnat.connect('https://neuro.med.uni-greifswald.de/xnat', user=user, password=password, cert=pem_certificate)
     return xnat_session

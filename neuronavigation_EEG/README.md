@@ -1,6 +1,25 @@
 # Digitization of EEG cap using Nexstim neuronavigation system
 This is a walkthrough of the necessary steps, data and scripts one needs to digitize an EEG cap with the Nexstim neuronagivation system.
 
+## Preparing the T1 image 
+In the current version of the eXimia software (INSERT SOFTWARE VERSION HERE), only the old 2D dicom are accepted. The old 2D dicom is part of a MR SOP class that was the common standard until a few years ago. The SOP class determines how the information in the file are stored and read: pixel size, patient position, institute name and so on. 
+In recent years, scanners only allow users to export DICOM images in "enhanced" formats. This is a different SOP class: not only data is stored in a unique 3D file, but also the information contained in the file are stored differently. For this reason, eXimia will give an error when trying to import scans that are not in the old 2D dicom format. 
+
+The solution to this problem comes from a toolbox called dicom3tools (https://www.dclunie.com/dicom3tools.html) by David Clunie. The function dcuncat allow also to "unenhance" a dicom image. It not only changes the header information to match the MR SOP class of an old 2D dicom, but also gives back one .dcm file for each slice (as the image was exported from the beginning in the old dicom format). 
+NOTE: some information in the enhanced format is actually missing. dcuncat simply replaces this info with standard values in order to match the right SOP class. The missing information is not a problem when importing in eXimia. 
+
+GUIDE FOR MAC USERS
+After installing dicom3tools, simply run through your bash the following [command](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_EEG/run_dicom3tools.sh).
+To run the `run_dicom3tools` bash function (located on your desktop) on your MacOS, open the terminal and type: 
+```
+sh \Users\USERNAME\Dekstop\run_dicom3tools
+```
+
+GUIDE FOR WINDOWS USERS
+In progress ...
+
+
+
 ## Acquiring the digitized cap (electrode positions)
 In the eXimia software, make sure that the T1w image of your participant is correctly loaded (only old dicom are accepted on software version 3). 
 Once the registration is done, click on the "Digitization" panel and "New exam". 

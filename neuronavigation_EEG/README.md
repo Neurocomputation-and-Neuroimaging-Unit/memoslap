@@ -8,16 +8,22 @@ In recent years, scanners only allow users to export DICOM images in "enhanced" 
 The solution to this problem comes from a toolbox called dicom3tools (https://www.dclunie.com/dicom3tools.html) by David Clunie. The function dcuncat allow also to "unenhance" a dicom image. It not only changes the header information to match the MR SOP class of an old 2D dicom, but also gives back one .dcm file for each slice (as the image was exported from the beginning in the old dicom format). 
 NOTE: some information in the enhanced format is actually missing. dcuncat simply replaces this info with standard values in order to match the right SOP class. The missing information is not a problem when importing in eXimia. 
 
-GUIDE FOR MAC USERS
+###Guide for MacOS users
 After installing dicom3tools, simply run through your bash the following [command](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_EEG/run_dicom3tools.sh).
 To run the `run_dicom3tools` bash function (located on your desktop) on your MacOS, open the terminal and type: 
 ```
-sh \Users\USERNAME\Dekstop\run_dicom3tools
+sh /Users/USERNAME/Dekstop/run_dicom3tools
 ```
 
-GUIDE FOR WINDOWS USERS
+###Guide for Windows users
 In progress ...
 
+###Quality check
+This is an image exported from the scanner as an old DICOM:
+![Old 2D dicom](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_EEG/imgs/2Ddicom_sub-2012_OG.JPG)
+This is the same image exported from the scanner as an enhanced DICOM and then unenhanced following the instructions reported before: 
+![Unenhanced 3D dicom](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_EEG/imgs/2Ddicom_sub-2012_unenhanced.JPG)
+As you'll be able to tell, there's no difference between the two!
 
 
 ## Acquiring the digitized cap (electrode positions)

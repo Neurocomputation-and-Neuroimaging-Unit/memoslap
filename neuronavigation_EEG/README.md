@@ -33,11 +33,11 @@ then you need to have a copy the cygwin1.dll file in your current path (Miro onl
    - in cygwin terminal everything on the local machine (e.g. where you have your dicom3tools) is under /cygdrive/
    - you need to download the normal version of [dicom3tools](https://www.dclunie.com/dicom3tools/workinprogress/index.html)
    - Assuming you have dicom3tools just on C:\dicom3tools then just navigate to /cygdrive/c/dicom3tools in the cygwin terminal
-   - in the terminal, run the following commands 
-       1. ./Configure
-       2. imake -I./config
-       3. make World
-       4. make install
+   - in the terminal, run the following commands (one after the other)
+       - ./Configure
+       - imake -I./config
+       - make World
+       - make install
           
 3) At the end of the processes in (2) you will have the relevant dicom3tools functions in /c/cygwin64/usr/local/bin/ and can proceed to run them as described above
 

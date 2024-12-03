@@ -2,10 +2,10 @@
 This is a walkthrough of the necessary steps, data and scripts one needs to digitize an EEG cap with the Nexstim neuronagivation system.
 
 ## Preparing the T1 image 
-In the current version of the eXimia software (INSERT SOFTWARE VERSION HERE), only the old 2D dicom are accepted. The old 2D dicom is part of a MR SOP class that was the common standard until a few years ago. The SOP class determines how the information in the file are stored and read: pixel size, patient position, institute name and so on. 
+In the current version of the eXimia software (2.1 or so), only the old 2D dicom are accepted. The old 2D dicom is part of a MR SOP class that was the common standard until a few years ago. The SOP class determines how the information in the file are stored and read: pixel size, patient position, institute name and so on. 
 In recent years, scanners only allow users to export DICOM images in "enhanced" formats. This is a different SOP class: not only data is stored in a unique 3D file, but also the information contained in the file are stored differently. For this reason, eXimia will give an error when trying to import scans that are not in the old 2D dicom format. 
 
-The solution to this problem comes from a toolbox called dicom3tools (https://www.dclunie.com/dicom3tools.html) by David Clunie. The function dcuncat allow also to "unenhance" a dicom image. It not only changes the header information to match the MR SOP class of an old 2D dicom, but also gives back one .dcm file for each slice (as the image was exported from the beginning in the old dicom format). 
+The solution to this problem comes from a toolbox called [dicom3tools](https://www.dclunie.com/dicom3tools.html) by David Clunie. The function dcuncat allow also to "unenhance" a dicom image. It not only changes the header information to match the MR SOP class of an old 2D dicom, but also gives back one .dcm file for each slice (as the image was exported from the beginning in the old dicom format). 
 NOTE: some information in the enhanced format is actually missing. dcuncat simply replaces this info with standard values in order to match the right SOP class. The missing information is not a problem when importing in eXimia. 
 
 ### Guide for MacOS users
@@ -16,7 +16,31 @@ sh /Users/USERNAME/Dekstop/run_dicom3tools
 ```
 
 ### Guide for Windows users
-In progress ...
+You need to use [Cygwin](https://cygwin.com/) to compile dicom3tools for Windows and then run the [function described above](https://github.com/Neurocomputation-and-Neuroimaging-Unit/memoslap/blob/main/neuronavigation_EEG/run_dicom3tools.sh) with the cygwin command line tool. If you want to run the executables in a command shall without Cygwin installed,
+then you need to have a copy the cygwin1.dll file in your current path (Miro only tried the cygwin variant).
+
+1) Download Cygwin. Run setup-x86_64, select a folder where to install, select a mirror from which to get packages, choose the following packages by searching for them and then *selecting from the dropdown menu a specific version (change from "SKIP")*:
+  - gcc-g++ (NOT gcc4-g++)
+  - imake
+  - make
+  - makedepend
+  - libX11-devel
+  - libXext-devel
+  - zip (only needed to make archive.winexe target, not to compile and install)
+
+2) After Cygwin is properly installed we work in the cygwin terminal:
+   - open cygwin terminal (found in the installation path of cywin (e.g. C:\cygwin64\Cygwin)
+   - in cygwin terminal everything on the local machine (e.g. where you have your dicom3tools) is under /cygdrive/
+   - you need to download the normal version of [dicom3tools](https://www.dclunie.com/dicom3tools/workinprogress/index.html)
+   - Assuming you have dicom3tools just on C:\dicom3tools then just navigate to /cygdrive/c/dicom3tools in the cygwin terminal
+   - in the terminal, run the following commands 
+       1. ./Configure
+       2. imake -I./config
+       3. make World
+       4. make install
+          
+3) At the end of the processes in 2) you will have the relevant dicom3tools functions in /c/cygwin64/usr/local/bin/ and can proceed to run them as described above
+
 
 ### Quality check
 This is an image exported from the scanner as an old DICOM:

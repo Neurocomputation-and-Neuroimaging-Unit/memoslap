@@ -20,13 +20,13 @@ You need to use [Cygwin](https://cygwin.com/) to compile dicom3tools for Windows
 then you need to have a copy the cygwin1.dll file in your current path (Miro only tried the cygwin variant).
 
 1) Download Cygwin. Run setup-x86_64, select a folder where to install, select a mirror from which to get packages, choose the following packages by searching for them and then *selecting from the dropdown menu a specific version (change from "SKIP")*:
-  - gcc-g++ (NOT gcc4-g++)
-  - imake
-  - make
-  - makedepend
-  - libX11-devel
-  - libXext-devel
-  - zip (only needed to make archive.winexe target, not to compile and install)
+    - gcc-g++ (NOT gcc4-g++)
+    - imake
+    - make
+    - makedepend
+    - libX11-devel
+    - libXext-devel
+    - zip (only needed to make archive.winexe target, not to compile and install)
 
 2) After Cygwin is properly installed we work in the cygwin terminal:
    - open cygwin terminal (found in the installation path of cywin (e.g. C:\cygwin64\Cygwin)
@@ -39,7 +39,7 @@ then you need to have a copy the cygwin1.dll file in your current path (Miro onl
        3. make World
        4. make install
           
-3) At the end of the processes in 2) you will have the relevant dicom3tools functions in /c/cygwin64/usr/local/bin/ and can proceed to run them as described above
+3) At the end of the processes in (2) you will have the relevant dicom3tools functions in /c/cygwin64/usr/local/bin/ and can proceed to run them as described above
 
 
 ### Quality check

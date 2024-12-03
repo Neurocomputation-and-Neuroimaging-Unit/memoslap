@@ -40,7 +40,7 @@ then you need to have a copy the cygwin1.dll file in your current path (Miro onl
        - make install
           
 3) At the end of the processes in (2) you will have the relevant dicom3tools functions in /c/cygwin64/usr/local/bin/ and can proceed to run them as described above
-
+    - you can use [this .sh code for Windows](neuronavigation/run_dicom3tools.sh) 
 
 ### Quality check
 This is an image exported from the scanner as an old DICOM:

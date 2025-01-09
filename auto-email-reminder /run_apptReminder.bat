@@ -1,0 +1,2 @@
+@echo off
+"C:\Users\nnu04\.conda\envs\projects\python.exe" "C:\Users\nnu04\PycharmProjects\projects\appointmentReminder\apptReminder.py" > "C:\Users\nnu04\PycharmProjects\projects\appointmentReminder\output.txt" 2>&1

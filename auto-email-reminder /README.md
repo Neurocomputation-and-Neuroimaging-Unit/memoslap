@@ -2,7 +2,7 @@
 The code can be used to automatically send reminder emails to participants when their appointment is upcoming.  
 
 1) Create Google Calendar API
-   	- Create a Google Cloud project and enable the API:
+- Create a Google Cloud project and enable the API:
 	1.	Go to the Google Cloud Console.
 	2.	Create a new project.
 	3.	Enable the Google Calendar API for the project.
@@ -16,7 +16,6 @@ The code can be used to automatically send reminder emails to participants when 
 	3.	Under “Test users,” add the email addresses of users who should have access.
 	4.	Save the changes.
 
-These users will now be able to authenticate and use your app.
 2) Adjust the script to your email account
   
 3) Set a recurring execution of the batch script with Windows Scheduler

@@ -16,7 +16,11 @@ The code can be used to automatically send reminder emails to participants when 
 		3.	Under “Test users,” add the email addresses of users who should have access.
 		4.	Save the changes.
 
-2) Adjust the script to your email account
+2) Adjust the scripts 
+   	- input your email details & email content in apptReminder.py
+   	- use your own google created credentials.json (see 1)
+   	- create your own token.json
+   	- create your own scheduler on Windows (see 3)
   
 3) Set a recurring execution of the batch script with Windows Scheduler
 	- Open Task Scheduler by searching for it in the Start menu.

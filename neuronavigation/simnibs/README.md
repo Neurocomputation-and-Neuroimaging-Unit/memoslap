@@ -1,5 +1,8 @@
 # memoslap
 
+## FROM 
+https://github.com/simnibs/memoslap_utils
+
 ### Get SIMNIBS
 https://simnibs.github.io/simnibs/build/html/index.html
 
@@ -34,3 +37,4 @@ A. Thielscher, 08-04-2023
 	`git config --global user.email "MonaLisa@louvre.dk"`  
 4. go to directory to which memoslap will be added as subfolder and run  
 	`git clone https://git.simnibs.drcmr.dk/simnibs/memoslap.git`
+

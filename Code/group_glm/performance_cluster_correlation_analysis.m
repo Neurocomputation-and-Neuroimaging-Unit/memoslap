@@ -1,0 +1,289 @@
+%% Performance-Cluster Correlation Analysis
+% =========================================================
+% TABLE 1 (participant-level):
+%   Rows = participants, Columns = clusters
+%   Values = each participant's raw cluster correlation value
+%   + avg_performance column
+%
+% TABLE 2 (group-level):
+%   Rows = clusters
+%   Spearman r and p-value testing whether the cluster
+%   correlation values (across participants) correlate
+%   with average performance (across participants)
+%   + FDR correction (Benjamini-Hochberg) for multiple comparisons
+%
+% CONFIGURE THE PATHS AND SUFFIX BELOW BEFORE RUNNING
+% =========================================================
+
+clc
+close all
+clear
+
+
+SPM_path = 'C:\Users\sreya\Documents\College\Internship_fMRI\Toolboxes\spm12-main';
+addpath(SPM_path);
+
+%% ── USER CONFIGURATION ───────────────────────────────────
+PERFORMANCE_FILE  = 'E:\memoslap\restingstate\performance_subject_session_run.csv';           % CSV: subject_id, session, run, percent_correct
+CLUSTER_CORR_FILE = 'E:\memoslap\restingstate\2ndLevel\Decoding Accuracy\avg_decoding_per_sphere_rS2_latebin.csv';  % CSV: subject_id + clust* columns
+OUTPUT_DIR        = 'E:\memoslap\restingstate\2ndLevel\Decoding Accuracy\Decoding_Behaviour';                    % Directory for output CSVs
+CLUSTER_SUFFIX    = 'latebin_rS2';                       % Keep only clust* columns ENDING with this
+%                                                 % e.g. 'rS2', 'rS3', 'lSPL', etc.
+%% ── END CONFIGURATION ────────────────────────────────────
+
+%% 1. Load data
+perf      = readtable(PERFORMANCE_FILE,  'TextType', 'string', 'VariableNamingRule', 'preserve');
+corr_data = readtable(CLUSTER_CORR_FILE, 'TextType', 'string', 'VariableNamingRule', 'preserve');
+ 
+fprintf('Performance file:  %d rows\n', height(perf));
+fprintf('Cluster corr file: %d rows, %d columns\n\n', height(corr_data), width(corr_data));
+fprintf('Performance file columns:  %s\n',   strjoin(perf.Properties.VariableNames,      ' | '));
+fprintf('Cluster corr file columns: %s\n\n', strjoin(corr_data.Properties.VariableNames, ' | '));
+ 
+ 
+%% 2. Detect subject ID column in each file
+ 
+perf_cols  = perf.Properties.VariableNames;
+corr_cols  = corr_data.Properties.VariableNames;
+ 
+perf_subj_idx = find(contains(lower(perf_cols), 'subject'), 1);
+corr_subj_idx = find(contains(lower(corr_cols), 'subject'), 1);
+ 
+if isempty(perf_subj_idx)
+    error('Could not find subject column in performance file. Columns: %s', strjoin(perf_cols,', '));
+end
+if isempty(corr_subj_idx)
+    error('Could not find subject column in cluster file. Columns: %s', strjoin(corr_cols,', '));
+end
+ 
+perf_subj_col = perf_cols{perf_subj_idx};
+corr_subj_col = corr_cols{corr_subj_idx};
+fprintf('Subject column — performance: "%s" | cluster: "%s"\n\n', perf_subj_col, corr_subj_col);
+ 
+ 
+%% 3. Normalise subject IDs: strip "sub-" prefix, force string
+ 
+perf.(perf_subj_col)      = regexprep(string(perf.(perf_subj_col)),      '^sub-', '');
+corr_data.(corr_subj_col) = regexprep(string(corr_data.(corr_subj_col)), '^sub-', '');
+ 
+% Debug: show first few IDs from each file after normalisation
+fprintf('First 3 subject IDs in performance file: %s\n', ...
+    strjoin(perf.(perf_subj_col)(1:min(3,end)), ', '));
+fprintf('First 3 subject IDs in cluster file:     %s\n\n', ...
+    strjoin(corr_data.(corr_subj_col)(1:min(3,end)), ', '));
+ 
+ 
+%% 4. Filter performance table to subjects present in cluster file
+ 
+valid_subjects = unique(corr_data.(corr_subj_col));   % string array
+perf_subj_ids  = perf.(perf_subj_col);                % string array
+ 
+perf = perf(ismember(perf_subj_ids, valid_subjects), :);
+fprintf('Subjects in cluster file:          %d\n', numel(valid_subjects));
+fprintf('Subjects kept in performance file: %d\n', numel(unique(perf.(perf_subj_col))));
+fprintf('Rows kept in performance file:     %d\n\n', height(perf));
+ 
+ 
+%% 5. Detect session / performance columns in the (now filtered) performance table
+ 
+% Re-read column names from the filtered table (same names, just confirming)
+perf_cols2 = perf.Properties.VariableNames;
+ 
+sess_idx  = find(strcmpi(perf_cols2, 'session'),         1);
+perf_idx  = find(strcmpi(perf_cols2, 'percent_correct'), 1);
+ 
+% Fallbacks if exact match fails
+if isempty(sess_idx),  sess_idx  = find(contains(lower(perf_cols2), 'session'),  1); end
+if isempty(perf_idx),  perf_idx  = find(contains(lower(perf_cols2), 'percent') | ...
+                                        contains(lower(perf_cols2), 'correct'),  1); end
+ 
+sess_col = perf_cols2{sess_idx};
+perf_col = perf_cols2{perf_idx};
+fprintf('Using columns — subject: "%s" | session: "%s" | performance: "%s"\n\n', ...
+    perf_subj_col, sess_col, perf_col);
+ 
+ 
+%% 6. Compute avg performance: runs → session avg → participant avg
+ 
+% Convert session column to numeric, handling any type MATLAB may have read it as
+sess_raw = perf.(sess_col);
+if isnumeric(sess_raw)
+    % Already numeric (NaN for missing)
+    session_num = sess_raw;
+else
+    % String/cell: strip BIDS prefix, convert; missing/empty/base -> NaN
+    sess_str    = string(sess_raw);
+    sess_str(ismissing(sess_str)) = "";
+    session_num = str2double(regexprep(sess_str, '^ses-0*', ''));
+end
+keep = ismember(session_num, [3, 4]);
+perf_filt   = perf(keep, :);
+perf_filt.session_num = session_num(keep);
+ 
+fprintf('Rows with session 3 or 4: %d\n', height(perf_filt));
+fprintf('Unique subjects in those rows: %d\n\n', numel(unique(perf_filt.(perf_subj_col))));
+ 
+% Convert percent_correct to numeric — handles both '79.88' and '79,88' formats
+pc_raw = perf_filt.(perf_col);
+if isnumeric(pc_raw)
+    pc_all = pc_raw;
+else
+    % Replace comma decimal separator with dot, then convert
+    pc_all = str2double(strrep(string(pc_raw), ',', '.'));
+end
+perf_filt.pc_numeric = pc_all;
+ 
+% Step A: mean over runs within each (subject, session)
+subjects   = unique(perf_filt.(perf_subj_col));
+n_subjects = numel(subjects);
+ 
+sess_subjs = strings(0,1);
+sess_vals  = zeros(0,1);
+ 
+for s = 1:n_subjects
+    subj = subjects(s);
+    for ses = [3, 4]
+        mask = (perf_filt.(perf_subj_col) == subj) & (perf_filt.session_num == ses);
+        if any(mask)
+            pc = perf_filt.pc_numeric(mask);
+            sess_subjs(end+1,1) = subj;                    %#ok<AGROW>
+            sess_vals(end+1,1)  = mean(pc, 'omitnan');     %#ok<AGROW>
+        end
+    end
+end
+ 
+% Step B: mean over sessions → one value per participant
+[uniq_subjs, ~, grp_idx] = unique(sess_subjs);
+avg_perf_vals = accumarray(grp_idx, sess_vals, [], @(x) mean(x,'omitnan'));
+avg_perf = table(uniq_subjs, avg_perf_vals, ...
+    'VariableNames', {'subject_id','avg_performance'});
+ 
+fprintf('Average performance per participant (%d subjects):\n', height(avg_perf));
+disp(avg_perf);
+ 
+ 
+%% 7. Select cluster columns ending with CLUSTER_SUFFIX
+ 
+suffix_low   = lower(CLUSTER_SUFFIX);
+is_cluster   = cellfun(@(c) endsWith(lower(c), suffix_low), corr_cols);
+cluster_cols = corr_cols(is_cluster);
+ 
+if isempty(cluster_cols)
+    error('No columns ending with "%s" found.\nAvailable: %s', ...
+        CLUSTER_SUFFIX, strjoin(corr_cols,', '));
+end
+ 
+fprintf('Cluster columns selected (%d, suffix="%s"):\n', numel(cluster_cols), CLUSTER_SUFFIX);
+fprintf('  %s\n', cluster_cols{:});
+fprintf('\n');
+ 
+ 
+%% 8. Extract raw cluster values per participant
+ 
+clust_mat = zeros(height(corr_data), numel(cluster_cols));
+for c = 1:numel(cluster_cols)
+    col = corr_data.(cluster_cols{c});
+    if iscell(col) || isstring(col)
+        col = str2double(col);
+    end
+    clust_mat(:, c) = col;
+end
+ 
+% Intersect on normalised string subject IDs
+corr_subjects = corr_data.(corr_subj_col);          % already string after step 3
+[common_subjects, ia, ib] = intersect(avg_perf.subject_id, corr_subjects, 'stable');
+perf_vec   = avg_perf.avg_performance(ia);
+clust_vals = clust_mat(ib, :);
+n_common   = numel(common_subjects);
+ 
+fprintf('Participants matched across both files: %d\n\n', n_common);
+ 
+ 
+%% 9. TABLE 1 — participant-level
+ 
+T1 = array2table(clust_vals, 'VariableNames', cluster_cols);
+T1 = addvars(T1, common_subjects, perf_vec, ...
+    'NewVariableNames', {'subject_id','avg_performance'}, 'Before', 1);
+ 
+fprintf('TABLE 1 — Participant-level:\n');
+disp(T1);
+ 
+if ~exist(OUTPUT_DIR,'dir'), mkdir(OUTPUT_DIR); end
+
+% ── Updated filename: descriptive + cluster suffix ──
+out1 = fullfile(OUTPUT_DIR, sprintf('perf_behavior_corr_participant_level_%s.csv', CLUSTER_SUFFIX));
+writetable(T1, out1);
+fprintf('Saved: %s\n\n', out1);
+ 
+ 
+%% 10. TABLE 2 — group-level Spearman per cluster + FDR correction
+ 
+n_clusters   = numel(cluster_cols);
+cluster_name = cluster_cols(:);
+n_obs        = zeros(n_clusters, 1);
+spearman_r   = zeros(n_clusters, 1);
+p_value      = zeros(n_clusters, 1);
+ 
+for c = 1:n_clusters
+    y     = clust_vals(:,c);
+    valid = ~isnan(perf_vec) & ~isnan(y);
+    n_obs(c) = sum(valid);
+ 
+    if n_obs(c) < 3
+        fprintf('  Skipping %s: only %d valid pairs.\n', cluster_cols{c}, n_obs(c));
+        spearman_r(c) = NaN;
+        p_value(c)    = NaN;
+        continue
+    end
+ 
+    [rho, pval]   = corr(perf_vec(valid), y(valid), 'Type', 'Spearman');
+    spearman_r(c) = rho;
+    p_value(c)    = pval;
+end
+
+% ── Benjamini-Hochberg FDR correction ──────────────────
+% Only correct over tests with valid p-values
+valid_tests  = find(~isnan(p_value));
+n_valid      = numel(valid_tests);
+p_fdr        = nan(n_clusters, 1);   % FDR-adjusted p-values
+sig_uncorr   = false(n_clusters, 1); % uncorrected significance at p < .05
+sig_fdr      = false(n_clusters, 1); % FDR-corrected significance at q < .05
+
+if n_valid > 0
+    % Sort valid p-values
+    [p_sorted, sort_idx] = sort(p_value(valid_tests));
+    orig_idx = valid_tests(sort_idx);   % indices back into full arrays
+
+    % BH step-up procedure
+    ranks     = (1:n_valid)';
+    bh_thresh = ranks / n_valid * 0.05; % critical values at FDR q = 0.05
+
+    % Find largest rank where p <= BH threshold
+    below     = p_sorted <= bh_thresh;
+    p_adj     = min(1, p_sorted .* n_valid ./ ranks); % Benjamini-Hochberg adjusted p
+    % Enforce monotonicity (cumulative minimum from the largest rank)
+    for k = n_valid-1 : -1 : 1
+        p_adj(k) = min(p_adj(k), p_adj(k+1));
+    end
+
+    % Write adjusted p-values back into full-length array
+    p_fdr(orig_idx) = p_adj;
+
+    % Significance flags
+    sig_uncorr(valid_tests) = p_value(valid_tests) < 0.05;
+    sig_fdr(orig_idx)       = p_adj < 0.05;
+end
+
+fprintf('\nFDR correction (Benjamini-Hochberg, q = 0.05) applied over %d tests.\n\n', n_valid);
+
+T2 = table(cluster_name, n_obs, spearman_r, p_value, p_fdr, sig_uncorr, sig_fdr, ...
+    'VariableNames', {'cluster','n','spearman_r','p_value_uncorrected', ...
+                      'p_value_FDR','significant_p05_uncorrected','significant_FDR05'});
+ 
+fprintf('TABLE 2 — Group-level Spearman correlations (with FDR correction):\n');
+disp(T2);
+
+% ── Updated filename: descriptive + cluster suffix ──
+out2 = fullfile(OUTPUT_DIR, sprintf('perf_behavior_corr_group_level_spearman_%s.csv', CLUSTER_SUFFIX));
+writetable(T2, out2);
+fprintf('Saved: %s\n', out2);

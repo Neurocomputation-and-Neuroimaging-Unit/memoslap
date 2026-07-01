@@ -86,4 +86,3 @@ analysis_steps = [4, 3, 1, 5, 7, 8, 10, 11, 12, 6, 9];
 - Step logic is preserved exactly as used in the original research; only file layout, comments, and config location changed.
 - `B13_cut_data.m` isn't called anywhere in the pipeline (kept for potential future use — add a `case` for it if needed).
 - `denoising_pipeline.m` (same folder) is a **separate, unrelated pipeline** — CONN toolbox, takes fMRIPrep output, not this pipeline's output.
-- `C5_fast_ecm_new.m` / `C6_interSJ_var_new.m` are separate post-processing scripts, not part of this pipeline — they live in `connectivity_scripts/`.

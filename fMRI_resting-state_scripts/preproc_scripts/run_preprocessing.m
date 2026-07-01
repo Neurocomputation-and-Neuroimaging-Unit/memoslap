@@ -43,6 +43,8 @@
 %   - DPABI
 %   - bramila (for bramila_framewiseDisplacement, used in step 7)
 %   - RESTplus  (used by some steps' underlying calls)
+%   - NIfTI toolbox (Jimmy Shen) -- only needed if step 2 is enabled (x>0)
+
 %
 % EXPECTED DATA LAYOUT (BIDS-like)
 %   <src_dir>/sub-<ID>/ses-<NN>/anat/ses-..._T1w.nii

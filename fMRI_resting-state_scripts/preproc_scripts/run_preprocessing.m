@@ -60,7 +60,7 @@ src_dir   = 'E:\memoslap\restingstate\nifti_bids';   % root folder with sub-*/se
 SPM_path  = 'C:\path\to\spm12';                      % SPM12 install folder
 
 addpath(fileparts(mfilename('fullpath')));           % this script's own folder
-addpath(fullfile(fileparts(mfilename('fullpath')), 'steps'));  % B*_ step functions
+addpath(fullfile(fileparts(mfilename('fullpath')), 'steps'));  % B*_ step functions, comment out if in the same folder as script
 
 % Not every step needs every toolbox below -- see README.md "Required
 % toolboxes" table for the full step-by-step breakdown. Quick summary:

@@ -1,7 +1,26 @@
 This repository holds a couple of Python scripts built to streamline neuroimaging workflows. They handle everything from raw anatomical surface reconstruction using Charm to running personalized SimNIBS tDCS simulations and extracting ROI stats.
+
 1. run_charm_T1-T2.py
+
 Batch script that automates head mesh creation using Charm.   
   What it does: 
     Loops through subject directories (sub-XXXX/ses-base/anat/) looking for T1w and T2w structural scans.   
     Skips completed work: Automatically checks if an m2m folder already exists for a subject so it doesn't re-run charm unnecessarily.   
     Clean execution: Ignores hidden/corrupted macOS files (like ._*) and fires off charm subjectXXXX <T1> <T2> --forceqform directly in the subject folder.  
+
+
+2. Sim_pipeline_V6.py
+
+The main simulation runner (For questions: Christian Curiel, curielchris05@gmail.com). 
+It sets up and executes 4-channel tDCS simulations via SimNIBS (acorrding with the aim of MeMoSLAP P2), extracts field magnitudes, and spits out a unified CSV (sim_results_V6.csv).
+
+The script does the following:
+    Checks disk space for existing completed volume meshes and fsaverage overlays before running. 
+    If a simulation is already done, it skips the heavy math and goes straight to data extraction.   
+  Dynamic Electrode Mapping: 
+      Pulls subject-space (X, Y, Z) coordinates directly from a target CSV file for anode and cathode setups (obtained prior).   
+      Multi-Space ROI Extraction:
+        Volume (MNI): Samples electric fields (E) and current density (J) across volumetric NIfTI masks in MNI space.   
+        Surface (fsaverage): Maps cortical patches across hemispheres using FreeSurfer overlays.   
+  Harmonization Metrics: Calculates volume/area-weighted field averages, total surface areas, and integrated electric fields. 
+  It also measures tissue exposure above key intensity thresholds (like 0.10, 0.15, and 0.20 V/m).

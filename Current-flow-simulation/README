@@ -1,1 +1,7 @@
 This repository holds a couple of Python scripts built to streamline neuroimaging workflows. They handle everything from raw anatomical surface reconstruction using Charm to running personalized SimNIBS tDCS simulations and extracting ROI stats.
+1. run_charm_T1-T2.py
+Batch script that automates head mesh creation using Charm.   
+  What it does: 
+    Loops through subject directories (sub-XXXX/ses-base/anat/) looking for T1w and T2w structural scans.   
+    Skips completed work: Automatically checks if an m2m folder already exists for a subject so it doesn't re-run charm unnecessarily.   
+    Clean execution: Ignores hidden/corrupted macOS files (like ._*) and fires off charm subjectXXXX <T1> <T2> --forceqform directly in the subject folder.  

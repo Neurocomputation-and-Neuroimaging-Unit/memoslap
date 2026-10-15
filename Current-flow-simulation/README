@@ -1,0 +1,1 @@
+This repository holds a couple of Python scripts built to streamline neuroimaging workflows. They handle everything from raw anatomical surface reconstruction using Charm to running personalized SimNIBS tDCS simulations and extracting ROI stats.
